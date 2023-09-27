@@ -7,7 +7,7 @@
 (ig-repl/set-prep! (fn [] (-> "resources/config.edn" slurp ig/read-string)))
 
 (def go ig-repl/go)
-(def ahlt ig-repl/halt)
+(def halt ig-repl/halt)
 (def reset ig-repl/reset)
 (def reset-all ig-repl/reset-all)
 
