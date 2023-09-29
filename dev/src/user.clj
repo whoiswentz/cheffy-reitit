@@ -2,7 +2,8 @@
   (:require [integrant.repl :as ig-repl]
             [integrant.core :as ig]
             [integrant.repl.state :as state]
-            [cheffy.server]))
+            [cheffy.server]
+            [next.jdbc :as jdbc]))
 
 (ig-repl/set-prep! (fn [] (-> "resources/config.edn" slurp ig/read-string)))
 
