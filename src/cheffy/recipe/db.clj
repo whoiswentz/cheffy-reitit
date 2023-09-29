@@ -1,6 +1,6 @@
 (ns cheffy.recipe.db
-  (:require [next.jdbc.sql :as sql]
-            [next.jdbc :as jdbc]))
+  (:require [next.jdbc :as jdbc]
+            [next.jdbc.sql :as sql]))
 
 (defn find-all-recipes
   [db uid]

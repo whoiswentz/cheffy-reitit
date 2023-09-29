@@ -5,5 +5,5 @@
   [env]
   (let [db (:jdbc-url env)]
     ["/recipes" {:swagger {:tags ["recipes"]}
-                 :get {:handler (recipe/list-all-recipes db)
-                       :summary "list all recipes"}}]))
+                 :get     {:handler (recipe/list-all-recipes db)
+                           :summary "list all recipes"}}]))

@@ -1,6 +1,6 @@
 (ns cheffy.core-test
-  (:require [clojure.test :refer :all]
-            [cheffy.server :refer :all]))
+  (:require [cheffy.server :refer :all]
+            [clojure.test :refer :all]))
 
 (deftest a-test
   (testing "FIXME, I fail."

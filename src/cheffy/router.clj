@@ -1,12 +1,12 @@
 (ns cheffy.router
-  (:require [reitit.ring :as ring]
-            [cheffy.recipe.routes :as recipe]
+  (:require [cheffy.recipe.routes :as recipe]
             [cheffy.swagger :as swagger]
             [muuntaja.core :as m]
+            [reitit.ring :as ring]
             [reitit.ring.middleware.muuntaja :as muuntaja]))
 
 (def router-config
-  {:data { :muuntaja m/instance
+  {:data {:muuntaja   m/instance
           :middleware [(:middleware swagger/handler)
                        muuntaja/format-middleware]}})
 

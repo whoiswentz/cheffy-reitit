@@ -14,9 +14,9 @@
   :main ^:skip-aot cheffy.server
   :target-path "target/%s"
   :uberjar-name "cheffy.jar"
-  :profiles {:uberjar {:aot :all
+  :profiles {:uberjar {:aot      :all
                        :jvm-opts ["-Dclojure.compiler.direct-linking=true"]}
-             :dev {:source-paths ["dev/src"]
-                   :resources-paths ["dev/resources"]
-                   :dependencies [[ring/ring-mock "0.4.0"]
-                                  [integrant/repl "0.3.3"]]}})
+             :dev     {:source-paths    ["dev/src"]
+                       :resources-paths ["dev/resources"]
+                       :dependencies    [[ring/ring-mock "0.4.0"]
+                                         [integrant/repl "0.3.3"]]}})
