@@ -2,13 +2,20 @@
   (:require [cheffy.recipe.routes :as recipe]
             [cheffy.swagger :as swagger]
             [muuntaja.core :as m]
+            [reitit.coercion.spec :as coercion-spec]
             [reitit.ring :as ring]
+            [reitit.ring.coercion :as coercion]
+            [reitit.ring.middleware.exception :as exception]
             [reitit.ring.middleware.muuntaja :as muuntaja]))
 
 (def router-config
-  {:data {:muuntaja   m/instance
+  {:data {:coercion   coercion-spec/coercion
+          :muuntaja   m/instance
           :middleware [(:middleware swagger/handler)
-                       muuntaja/format-middleware]}})
+                       muuntaja/format-middleware
+                       exception/exception-middleware
+                       coercion/coerce-request-middleware
+                       coercion/coerce-response-middleware]}})
 
 (defn routes
   [env]
