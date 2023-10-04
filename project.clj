@@ -10,7 +10,8 @@
                  [com.github.seancorfield/next.jdbc "1.3.883"]
                  [org.postgresql/postgresql "42.6.0"]
                  [clj-http "3.12.3"]
-                 [net.clojars.kelveden/ring-jwt "2.4.0"]]
+                 [net.clojars.kelveden/ring-jwt "2.4.0"]
+                 [camel-snake-kebab "0.4.3"]]
   :main ^:skip-aot cheffy.server
   :target-path "target/%s"
   :uberjar-name "cheffy.jar"
