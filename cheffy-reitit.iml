@@ -98,18 +98,37 @@
     <orderEntry type="library" name="Leiningen: org.clojure/test.check:1.1.1" level="project" />
     <orderEntry type="library" name="Leiningen: org.clojure/tools.namespace:1.5.0" level="project" />
     <orderEntry type="library" name="Leiningen: org.clojure/tools.reader:1.4.0" level="project" />
+    <orderEntry type="library" name="Leiningen: org.eclipse.jetty.toolchain/jetty-jakarta-servlet-api:5.0.2" level="project" />
+    <orderEntry type="library" name="Leiningen: org.eclipse.jetty.websocket/websocket-core-common:11.0.24" level="project" />
+    <orderEntry type="library" name="Leiningen: org.eclipse.jetty.websocket/websocket-core-server:11.0.24" level="project" />
+    <orderEntry type="library" name="Leiningen: org.eclipse.jetty.websocket/websocket-jetty-api:11.0.24" level="project" />
+    <orderEntry type="library" name="Leiningen: org.eclipse.jetty.websocket/websocket-jetty-common:11.0.24" level="project" />
+    <orderEntry type="library" name="Leiningen: org.eclipse.jetty.websocket/websocket-jetty-server:11.0.24" level="project" />
+    <orderEntry type="library" name="Leiningen: org.eclipse.jetty.websocket/websocket-servlet:11.0.24" level="project" />
+    <orderEntry type="library" name="Leiningen: org.eclipse.jetty/jetty-http:11.0.24" level="project" />
+    <orderEntry type="library" name="Leiningen: org.eclipse.jetty/jetty-io:11.0.24" level="project" />
+    <orderEntry type="library" name="Leiningen: org.eclipse.jetty/jetty-security:11.0.24" level="project" />
+    <orderEntry type="library" name="Leiningen: org.eclipse.jetty/jetty-server:11.0.24" level="project" />
+    <orderEntry type="library" name="Leiningen: org.eclipse.jetty/jetty-servlet:11.0.24" level="project" />
+    <orderEntry type="library" name="Leiningen: org.eclipse.jetty/jetty-unixdomain-server:11.0.24" level="project" />
+    <orderEntry type="library" name="Leiningen: org.eclipse.jetty/jetty-util:11.0.24" level="project" />
+    <orderEntry type="library" name="Leiningen: org.eclipse.jetty/jetty-webapp:11.0.24" level="project" />
+    <orderEntry type="library" name="Leiningen: org.eclipse.jetty/jetty-xml:11.0.24" level="project" />
     <orderEntry type="library" name="Leiningen: org.javassist/javassist:3.18.1-GA" level="project" />
     <orderEntry type="library" name="Leiningen: org.msgpack/msgpack:0.6.12" level="project" />
     <orderEntry type="library" name="Leiningen: org.nrepl/incomplete:0.1.0" level="project" />
     <orderEntry type="library" name="Leiningen: org.postgresql/postgresql:42.2.10" level="project" />
     <orderEntry type="library" name="Leiningen: org.ring-clojure/ring-core-protocols:1.13.0" level="project" />
+    <orderEntry type="library" name="Leiningen: org.ring-clojure/ring-jakarta-servlet:1.13.0" level="project" />
     <orderEntry type="library" name="Leiningen: org.ring-clojure/ring-websocket-protocols:1.13.0" level="project" />
+    <orderEntry type="library" name="Leiningen: org.slf4j/slf4j-api:2.0.9" level="project" />
     <orderEntry type="library" name="Leiningen: ovotech/ring-jwt:2.3.0" level="project" />
     <orderEntry type="library" name="Leiningen: potemkin:0.4.7" level="project" />
     <orderEntry type="library" name="Leiningen: prismatic/schema:1.1.12" level="project" />
     <orderEntry type="library" name="Leiningen: riddley:0.1.12" level="project" />
     <orderEntry type="library" name="Leiningen: ring/ring-codec:1.2.0" level="project" />
     <orderEntry type="library" name="Leiningen: ring/ring-core:1.13.0" level="project" />
+    <orderEntry type="library" name="Leiningen: ring/ring-jetty-adapter:1.13.0" level="project" />
     <orderEntry type="library" name="Leiningen: ring/ring-mock:0.4.0" level="project" />
     <orderEntry type="library" name="Leiningen: slingshot:0.12.2" level="project" />
     <orderEntry type="library" name="Leiningen: tech.droit/clj-diff:1.0.1" level="project" />
