@@ -12,5 +12,5 @@
 (def reset ig-repl/reset)
 (def reset-all ig-repl/reset-all)
 
-(defn app [] (-> state/system :cheffy/app))
-(defn db [] (-> state/system :db/postgres))
+(def app (-> state/system :cheffy/app))
+(def db (-> state/system :db/postgres))
