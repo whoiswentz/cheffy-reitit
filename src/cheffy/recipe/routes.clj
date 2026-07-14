@@ -20,4 +20,16 @@
       {:get {:handler (recipe/retrieve-recipe db)
              :parameters {:path {:recipe-id string?}}
              :response {200 {:body responses/recipe}}
-             :summary "Retrieve recipe"}}]]))
+             :summary "Retrieve recipe"}}
+      :put {:handler   (recipe/update-recipe! db)
+            :parameter {:path {:recipe-id string?}
+                        :body {:name      string?
+                               :prep-time int?
+                               :public    boolean?
+                               :img       string?}}
+            :responses {204 {:body nil?}}
+            :summary   "Update recipe"}
+      :delete {:handler (recipe/delete-recipe! db)
+            :parameters {:path {:recipe-id string?}}
+            :response {204 {:body nil?}}
+            :summary "Delete recipe"}]]))

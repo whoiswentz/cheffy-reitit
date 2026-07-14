@@ -3,6 +3,7 @@
             [clojure.tools.logging :as log]
             [environ.core :refer [env]]
             [integrant.core :as ig]
+            [next.jdbc :as jdbc]
             [ring.adapter.jetty :as jetty]))
 
 (defn app
@@ -33,9 +34,9 @@
        config)})
 
 (defmethod ig/init-key :db/postgres
-  [_ config]
-  (log/info "Configured db")
-  (:jdbc-url config))
+  [key {:keys [jdbc-url]}]
+  (log/info "Configured db" key)
+  (jdbc/with-options jdbc-url jdbc/snake-kebab-opts))
 
 (defmethod ig/halt-key! :server/jetty
   [_ jetty]
