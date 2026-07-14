@@ -9,3 +9,4 @@ target/
 *.class
 .idea
 cheffy-reitit.iml
+.clj-kondo
