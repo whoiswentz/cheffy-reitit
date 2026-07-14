@@ -1,5 +1,6 @@
 (ns cheffy.server
   (:require [cheffy.router :as router]
+            [clojure.tools.logging :as log]
             [environ.core :refer [env]]
             [integrant.core :as ig]
             [ring.adapter.jetty :as jetty]))
@@ -16,13 +17,13 @@
 
 (defmethod ig/init-key :server/jetty
   [_ {:keys [handler port]}]
-  (println (str "\nServer running on port " port))
+  (log/info "Server running on port" port)
   (jetty/run-jetty handler {:port  port
                             :join? false}))
 
 (defmethod ig/init-key :cheffy/app
   [_ config]
-  (println "\nApp started")
+  (log/info "App started")
   (app config))
 
 (defmethod ig/expand-key :db/postgres
@@ -33,7 +34,7 @@
 
 (defmethod ig/init-key :db/postgres
   [_ config]
-  (println "\nConfigured db")
+  (log/info "Configured db")
   (:jdbc-url config))
 
 (defmethod ig/halt-key! :server/jetty
