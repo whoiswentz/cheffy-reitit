@@ -8,17 +8,28 @@
   [env]
   (router/routes env))
 
+(defmethod ig/expand-key :server/jetty
+  [key config]
+  {key (if-let [port (env :port)]
+       (assoc config :port (Integer/parseInt port))
+       config)})
+
 (defmethod ig/init-key :server/jetty
   [_ {:keys [handler port]}]
-  (let [port (if (env :port) (Integer/parseInt (env :port)) port)]
-    (println (str "\nServer running on port " port))
-    (jetty/run-jetty handler {:port  port
-                              :join? false})))
+  (println (str "\nServer running on port " port))
+  (jetty/run-jetty handler {:port  port
+                            :join? false}))
 
 (defmethod ig/init-key :cheffy/app
   [_ config]
   (println "\nApp started")
   (app config))
+
+(defmethod ig/expand-key :db/postgres
+  [key config]
+  {key (if-let [jdbc-url (env :jdbc-url)]
+       (assoc config :jdbc-url jdbc-url)
+       config)})
 
 (defmethod ig/init-key :db/postgres
   [_ config]
@@ -32,4 +43,4 @@
 (defn -main
   [config-file]
   (let [config (-> config-file slurp ig/read-string)]
-    (-> config ig/init)))
+    (-> config ig/expand ig/init)))
