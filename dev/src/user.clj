@@ -1,8 +1,8 @@
 (ns user
-  (:require [integrant.repl :as ig-repl]
+  (:require [cheffy.server]
             [integrant.core :as ig]
-            [integrant.repl.state :as state]
-            [cheffy.server]))
+            [integrant.repl :as ig-repl]
+            [integrant.repl.state :as state]))
 
 (ig-repl/set-prep!
   (fn [] (-> "resources/config.edn"
