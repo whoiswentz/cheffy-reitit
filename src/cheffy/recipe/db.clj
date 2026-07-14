@@ -15,3 +15,12 @@
       (assoc recipe
         :recipe/steps (sql/find-by-keys conn :step {:recipe_id recipe-id})
         :recipe/ingredients (sql/find-by-keys conn :ingredient {:recipe_id recipe-id})))))
+
+(defn insert-recipe!
+  [db {:keys [recipe-id uid name prep-time img]}]
+  (sql/insert! db :recipe {:recipe_id recipe-id
+                           :uid uid
+                           :name name
+                           :prep_time prep-time
+                           :public false
+                           :img img}))
