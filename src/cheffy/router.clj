@@ -4,7 +4,10 @@
             [reitit.ring :as ring]
             [reitit.ring.middleware.muuntaja :as muuntaja]
             [reitit.swagger :as swagger]
-            [reitit.swagger-ui :as swagger-ui]))
+            [reitit.swagger-ui :as swagger-ui]
+            [reitit.coercion.spec :as coercion-spec]
+            [reitit.ring.coercion :as coercion]
+            [reitit.ring.middleware.exception :as exception]))
 
 (def swagger-docs
   ["/swagger.json" {:get {:no-doc  true
@@ -15,9 +18,12 @@
                           :handler (swagger/create-swagger-handler)}}])
 
 (def router-config
-  {:data {:muuntaja   m/instance
+  {:data {:coercion coercion-spec/coercion
+          :muuntaja   m/instance
           :middleware [swagger/swagger-feature
-                       muuntaja/format-middleware]}})
+                       muuntaja/format-middleware
+                       exception/exception-middleware
+                       coercion/coerce-request-middleware]}})
 
 (defn routes
   [env]
