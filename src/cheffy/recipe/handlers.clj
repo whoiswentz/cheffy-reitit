@@ -7,14 +7,14 @@
 (defn list-all-recipes
   [db]
   (fn [request]
-    (let [uid "auth0|5ef440986e8fbb001355fd9c"
+    (let [uid (-> request :claims :sub)
           recipes (recipe-db/find-all db uid)]
       (rr/response recipes))))
 
 (defn retrieve-recipe
   [db]
   (fn [request]
-    (let [recipe-id "a3dde84c-4a33-45aa-b0f3-4bf9ac997680"]
+    (let [recipe-id (-> request :parameters :path :recipe-id)]
       (if-let [recipe (recipe-db/find-by-id db recipe-id)]
         (rr/response recipe)
         (rr/not-found {:type "recipe-not-found"
@@ -25,7 +25,7 @@
   [db]
   (fn [request]
     (let [recipe-id (str (UUID/randomUUID))
-          uid       "auth0|5ef440986e8fbb001355fd9c"
+          uid       (-> request :claims :sub)
           recipe    (assoc (-> request :parameters :body)
                            :recipe-id recipe-id
                            :uid uid)]
@@ -35,7 +35,7 @@
 (defn update-recipe!
   [db]
   (fn [request]
-    (let [recipe-id "a3dde84c-4a33-45aa-b0f3-4bf9ac997680"
+    (let [recipe-id (-> request :parameters :path :recipe-id)
           recipe    (assoc (-> request :parameters :body) :recipe-id recipe-id)]
       (if (recipe-db/update-recipe! db recipe)
         {:status 204}
@@ -46,7 +46,7 @@
 (defn delete-recipe!
   [db]
   (fn [request]
-    (let [recipe-id "a3dde84c-4a33-45aa-b0f3-4bf9ac997680"]
+    (let [recipe-id (-> request :parameters :path :recipe-id)]
       (if (recipe-db/delete! db recipe-id)
         {:status 204}
         (rr/not-found {:type "recipe-not-found"
