@@ -9,8 +9,9 @@
    :wrap (fn [handler]
            (jwt/wrap-jwt
              handler
-             {:alg :RS256
-              :jwk-endpoint "https://dev-l6x6wetr1ruqvu3s.us.auth0.com/.well-known/jwks.json"}))})
+             {:issuers {"https://dev-l6x6wetr1ruqvu3s.us.auth0.com/"
+                        {:alg :RS256
+                         :jwk-endpoint "https://dev-l6x6wetr1ruqvu3s.us.auth0.com/.well-known/jwks.json"}}}))})
 
 (def wrap-recipe-owner
   {:name        ::recipe-owner
@@ -19,7 +20,7 @@
                   (fn [request]
                     (let [uid (-> request :claims :sub)
                           recipe-id (-> request :parameters :path :recipe-id)
-                          recipe (recipe-db/find-by-id db {:uid uid :recipe-id recipe-id})]
+                          recipe (recipe-db/find-by-id db recipe-id)]
                       (if (= (:recipe/uid recipe) uid)
                         (handler request)
                         (-> (rr/response {:message "You need to be the recipe owner"

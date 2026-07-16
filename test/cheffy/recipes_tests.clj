@@ -3,6 +3,8 @@
             [cheffy.server :refer :all]
             [cheffy.test-system :as ts]))
 
+(use-fixtures :once ts/token-fixtures)
+
 (def recipe-id (atom nil))
 
 (def recipe
