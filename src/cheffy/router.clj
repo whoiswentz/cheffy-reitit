@@ -1,15 +1,17 @@
 (ns cheffy.router
   (:require [cheffy.recipe.routes :as recipe]
+            [cheffy.types :as types]
             [muuntaja.core :as m]
+            [reitit.coercion.schema :as coercion-schema]
+            [reitit.dev.pretty :as pretty]
             [reitit.ring :as ring]
-            [reitit.ring.middleware.muuntaja :as muuntaja]
-            [reitit.swagger :as swagger]
-            [reitit.swagger-ui :as swagger-ui]
-            [reitit.coercion.spec :as coercion-spec]
             [reitit.ring.coercion :as coercion]
             [reitit.ring.middleware.exception :as exception]
-            [reitit.dev.pretty :as pretty]
-            [reitit.ring.spec :as rs]))
+            [reitit.ring.middleware.muuntaja :as muuntaja]
+            [reitit.ring.spec :as rs]
+            [reitit.swagger :as swagger]
+            [reitit.swagger-ui :as swagger-ui]
+            [schema.core :as s]))
 
 (def swagger-docs
   ["/swagger.json" {:get {:no-doc  true
@@ -22,15 +24,15 @@
 (def router-config
   {:validate rs/validate
    :exception pretty/exception
-   :data {:coercion coercion-spec/coercion
+   :data {:coercion   coercion-schema/coercion
           :muuntaja   m/instance
           :middleware [swagger/swagger-feature
                        muuntaja/format-middleware
                        exception/exception-middleware
                        coercion/coerce-request-middleware]}})
 
-(defn routes
-  [env]
+(s/defn routes :- types/Handler
+  [env :- types/Env]
   (ring/ring-handler
     (ring/router [swagger-docs ["/v1" (recipe/routes env)]] router-config)
     (ring/routes (swagger-ui/create-swagger-ui-handler {:path "/"}))))

@@ -1,19 +1,20 @@
 (ns cheffy.recipe.handlers
   (:require [cheffy.recipe.db :as recipe-db]
+            [cheffy.types :as types]
             [ring.util.response :as rr]
-            [cheffy.responses :as responses])
+            [schema.core :as s])
   (:import (java.util UUID)))
 
-(defn list-all-recipes
-  [db]
-  (fn [request]
+(s/defn list-all-recipes :- types/Handler
+  [db :- types/Database]
+  (s/fn [request :- types/RingRequest]
     (let [uid (-> request :claims :sub)
           recipes (recipe-db/find-all db uid)]
       (rr/response recipes))))
 
-(defn retrieve-recipe
-  [db]
-  (fn [request]
+(s/defn retrieve-recipe :- types/Handler
+  [db :- types/Database]
+  (s/fn [request :- types/RingRequest]
     (let [recipe-id (-> request :parameters :path :recipe-id)]
       (if-let [recipe (recipe-db/find-by-id db recipe-id)]
         (rr/response recipe)
@@ -21,20 +22,20 @@
                        :message "Recipe not found"
                        :data (str "recipe-id-" recipe-id)})))))
 
-(defn create-recipe!
-  [db]
-  (fn [request]
+(s/defn create-recipe! :- types/Handler
+  [db :- types/Database]
+  (s/fn [request :- types/RingRequest]
     (let [recipe-id (str (UUID/randomUUID))
           uid       (-> request :claims :sub)
           recipe    (assoc (-> request :parameters :body)
                            :recipe-id recipe-id
                            :uid uid)]
       (recipe-db/insert! db recipe)
-      (rr/created (str responses/base-url "/recipes/" recipe-id) {:recipe-id recipe-id}))))
+      (rr/created (str "localhost/recipes/" recipe-id) {:recipe-id recipe-id}))))
 
-(defn update-recipe!
-  [db]
-  (fn [request]
+(s/defn update-recipe! :- types/Handler
+  [db :- types/Database]
+  (s/fn [request :- types/RingRequest]
     (let [recipe-id (-> request :parameters :path :recipe-id)
           recipe    (assoc (-> request :parameters :body) :recipe-id recipe-id)]
       (if (recipe-db/update-recipe! db recipe)
@@ -43,9 +44,9 @@
                        :message "Recipe not found"
                        :data (str "recipe-id-" recipe-id)})))))
 
-(defn delete-recipe!
-  [db]
-  (fn [request]
+(s/defn delete-recipe! :- types/Handler
+  [db :- types/Database]
+  (s/fn [request :- types/RingRequest]
     (let [recipe-id (-> request :parameters :path :recipe-id)]
       (if (recipe-db/delete! db recipe-id)
         {:status 204}

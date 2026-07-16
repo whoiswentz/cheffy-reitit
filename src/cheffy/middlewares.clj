@@ -1,9 +1,11 @@
 (ns cheffy.middlewares
-  (:require [ring.middleware.jwt :as jwt]
-            [cheffy.recipe.db :as recipe-db]
-            [ring.util.response :as rr]))
+  (:require [cheffy.recipe.db :as recipe-db]
+            [cheffy.types :as types]
+            [ring.middleware.jwt :as jwt]
+            [ring.util.response :as rr]
+            [schema.core :as s]))
 
-(def wrap-auth0
+(s/def wrap-auth0 :- types/AuthMiddleware
   {:name ::auth0
    :description "Middleware for auth0"
    :wrap (fn [handler]
@@ -13,7 +15,7 @@
                         {:alg :RS256
                          :jwk-endpoint "https://dev-l6x6wetr1ruqvu3s.us.auth0.com/.well-known/jwks.json"}}}))})
 
-(def wrap-recipe-owner
+(s/def wrap-recipe-owner :- types/OwnerMiddleware
   {:name        ::recipe-owner
    :description "Middleware to check if a requestor is a recipe owner"
    :wrap        (fn [handler db]

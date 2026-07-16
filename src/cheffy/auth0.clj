@@ -1,8 +1,9 @@
 (ns cheffy.auth0
   (:require [clj-http.client :as http]
-            [muuntaja.core :as m]))
+            [muuntaja.core :as m]
+            [schema.core :as s]))
 
-(defn get-test-token
+(s/defn get-test-token :- s/Str
   []
   (->> {:content-type :json
         :cookie-policy :standard
