@@ -39,6 +39,14 @@
     (let [{:keys [status body]} (ts/test-endpoint :put (str "/v1/recipes/" @recipe-id) {:auth true :body update-recipe})]
       (is (= status 204))))
 
+  (testing "Favorite recipe"
+    (let [{:keys [status]} (ts/test-endpoint :post (str "/v1/recipes/" @recipe-id "/favorite") {:auth true})]
+      (is (= status 204))))
+
+  (testing "Unfavorite recipe"
+    (let [{:keys [status]} (ts/test-endpoint :delete (str "/v1/recipes/" @recipe-id "/favorite") {:auth true})]
+      (is (= status 204))))
+
   (testing "Delete recipe"
     (let [{:keys [status body]} (ts/test-endpoint :delete (str "/v1/recipes/" @recipe-id) {:auth true})]
       (is (= status 204)))))

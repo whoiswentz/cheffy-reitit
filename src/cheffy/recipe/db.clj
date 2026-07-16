@@ -2,6 +2,7 @@
   (:require [cheffy.in :as in]
             [cheffy.out :as out]
             [cheffy.types :as types]
+            [next.jdbc :as jdbc]
             [next.jdbc.sql :as sql]
             [schema.core :as s])
   (:import (clojure.lang IPersistentMap)))
@@ -31,3 +32,23 @@
   [db :- types/Database, recipe-id :- s/Str]
   (let [update (sql/delete! db :recipe {:recipe-id recipe-id})]
     (= (:next.jdbc/update-count update) 1)))
+
+(s/defn favorite-recipe! :- IPersistentMap
+  [db :- types/Database
+   {:keys [recipe-id] :as data}]
+  (jdbc/with-transaction [tx db]
+                         (sql/insert! tx :recipe-favorite data (:options db))
+                         (jdbc/execute-one! tx ["UPDATE recipe
+                            SET favorite_count = favorite_count + 1
+                            WHERE recipe_id = ?" recipe-id])))
+
+(s/defn unfavorite-recipe! :- s/Bool
+  [db :- types/Database
+   {:keys [recipe-id] :as data}]
+  (-> (jdbc/with-transaction [tx db]
+                             (sql/delete! tx :recipe-favorite data (:options db))
+                             (jdbc/execute-one! tx ["UPDATE recipe
+                            SET favorite_count = favorite_count - 1
+                            WHERE recipe_id = ?" recipe-id]))
+      :next.jdbc/update-count
+      (pos?)))

@@ -7,14 +7,14 @@
 
 (s/defn list-all-recipes :- types/Handler
   [db :- types/Database]
-  (s/fn [request :- types/RingRequest]
+  (s/fn :- types/RingResponse [request :- types/RingRequest]
     (let [uid (-> request :claims :sub)
           recipes (recipe-db/find-all db uid)]
       (rr/response recipes))))
 
 (s/defn retrieve-recipe :- types/Handler
   [db :- types/Database]
-  (s/fn [request :- types/RingRequest]
+  (s/fn :- types/RingResponse [request :- types/RingRequest]
     (let [recipe-id (-> request :parameters :path :recipe-id)]
       (if-let [recipe (recipe-db/find-by-id db recipe-id)]
         (rr/response recipe)
@@ -24,7 +24,7 @@
 
 (s/defn create-recipe! :- types/Handler
   [db :- types/Database]
-  (s/fn [request :- types/RingRequest]
+  (s/fn :- types/RingResponse [request :- types/RingRequest]
     (let [recipe-id (str (UUID/randomUUID))
           uid       (-> request :claims :sub)
           recipe    (assoc (-> request :parameters :body)
@@ -35,21 +35,41 @@
 
 (s/defn update-recipe! :- types/Handler
   [db :- types/Database]
-  (s/fn [request :- types/RingRequest]
+  (s/fn :- types/RingResponse [request :- types/RingRequest]
     (let [recipe-id (-> request :parameters :path :recipe-id)
           recipe    (assoc (-> request :parameters :body) :recipe-id recipe-id)]
       (if (recipe-db/update-recipe! db recipe)
-        {:status 204}
+        (rr/status 204)
         (rr/not-found {:type "recipe-not-found"
                        :message "Recipe not found"
                        :data (str "recipe-id-" recipe-id)})))))
 
 (s/defn delete-recipe! :- types/Handler
   [db :- types/Database]
-  (s/fn [request :- types/RingRequest]
+  (s/fn :- types/RingResponse [request :- types/RingRequest]
     (let [recipe-id (-> request :parameters :path :recipe-id)]
       (if (recipe-db/delete! db recipe-id)
-        {:status 204}
+        (rr/status 204)
+        (rr/not-found {:type "recipe-not-found"
+                       :message "Recipe not found"
+                       :data (str "recipe-id-" recipe-id)})))))
+
+(s/defn favorite-recipe! :- types/Handler
+  [db :- types/Database]
+  (s/fn :- types/RingResponse [request :- types/RingRequest]
+    (let [uid (-> request :claims :sub)
+          recipe-id (-> request :parameters :path :recipe-id)]
+      (recipe-db/favorite-recipe! db {:uid uid :recipe-id recipe-id})
+      (rr/status 204))))
+
+(s/defn unfavorite-recipe! :- types/Handler
+  [db :- types/Database]
+  (s/fn :- types/RingResponse [request :- types/RingRequest]
+    (let [uid (-> request :claims :sub)
+          recipe-id (-> request :parameters :path :recipe-id)
+          deleted? (recipe-db/unfavorite-recipe! db {:uid uid :recipe-id recipe-id})]
+      (if deleted?
+        (rr/status 204)
         (rr/not-found {:type "recipe-not-found"
                        :message "Recipe not found"
                        :data (str "recipe-id-" recipe-id)})))))
