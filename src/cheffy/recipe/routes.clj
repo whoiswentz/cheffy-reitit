@@ -1,8 +1,8 @@
-(ns cheffy.recipe.api.routes
+(ns cheffy.recipe.routes
   (:require [cheffy.middlewares :as mw]
-            [cheffy.recipe.api.handlers :as recipe]
-            [cheffy.recipe.api.in :as in]
-            [cheffy.recipe.api.out :as out]
+            [cheffy.recipe.handlers :as recipe]
+            [cheffy.recipe.in :as in]
+            [cheffy.recipe.out :as out]
             [cheffy.types :as types]
             [schema.core :as s])
   (:import (clojure.lang PersistentVector)))
@@ -10,16 +10,16 @@
 (s/defn routes :- PersistentVector
   [env :- types/Env]
   (let [db (:jdbc-url env)]
-    ["/recipes" {:swagger    {:tags ["recipes"]}
+    ["/recipes" {:swagger {:tags ["recipes"]}
                  :middleware [[mw/wrap-auth0]]}
      [""
-      {:get  {:handler   (recipe/list-all-recipes db)
-              :responses {200 {:body out/Recipes}}
-              :summary   "List all recipes"}
-       :post {:handler    (recipe/create-recipe! db)
+      {:get {:handler (recipe/list-all-recipes db)
+             :responses {200 {:body out/Recipes}}
+             :summary "List all recipes"}
+       :post {:handler (recipe/create-recipe! db)
               :parameters {:body in/RecipeCreate}
-              :responses  {201 {:body {:recipe-id s/Str}}}
-              :summary    "Create recipe"}}]
+              :responses {201 {:body {:recipe-id s/Str}}}
+              :summary "Create recipe"}}]
      ["/:recipe-id"
       [""
        {:get    {:handler    (recipe/retrieve-recipe db)
@@ -39,18 +39,18 @@
                  :responses  {204 {:body nil?}}
                  :summary    "Delete recipe"}}]
       ["/steps"
-       {:post   {:handler    (recipe/create-step! db)
-                 :middleware [[mw/wrap-recipe-owner db]]
-                 :parameters {:path {:recipe-id s/Str}
-                              :body in/StepCreate}
-                 :responses  {201 {:body {:step-id s/Str}}}
-                 :summary    "Create step"}
+       {:post    {:handler    (recipe/create-step! db)
+                  :middleware [[mw/wrap-recipe-owner db]]
+                  :parameters {:path {:recipe-id s/Str}
+                               :body in/StepCreate}
+                  :responses  {201 {:body {:step-id s/Str}}}
+                  :summary    "Create step"}
         :put    {:handler    (recipe/update-step! db)
-                 :middleware [[mw/wrap-recipe-owner db]]
-                 :parameters {:path {:recipe-id s/Str}
-                              :body in/StepUpdate}
-                 :responses  {204 {:body nil?}}
-                 :summary    "Update step"}
+                  :middleware [[mw/wrap-recipe-owner db]]
+                  :parameters {:path {:recipe-id s/Str}
+                               :body in/StepUpdate}
+                  :responses  {204 {:body nil?}}
+                  :summary    "Update step"}
         :delete {:handler    (recipe/delete-step! db)
                  :middleware [[mw/wrap-recipe-owner db]]
                  :parameters {:path {:recipe-id s/Str}
