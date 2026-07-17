@@ -1,5 +1,5 @@
 (ns cheffy.router
-  (:require [cheffy.recipe.routes :as recipe]
+  (:require [cheffy.recipe.api.routes :as recipe]
             [cheffy.types :as types]
             [muuntaja.core :as m]
             [reitit.coercion.schema :as coercion-schema]

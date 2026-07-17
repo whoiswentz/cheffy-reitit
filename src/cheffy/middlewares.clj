@@ -1,5 +1,5 @@
 (ns cheffy.middlewares
-  (:require [cheffy.recipe.db :as recipe-db]
+  (:require [cheffy.recipe.application.queries :as queries]
             [cheffy.types :as types]
             [ring.middleware.jwt :as jwt]
             [ring.util.response :as rr]
@@ -22,7 +22,7 @@
                   (fn [request]
                     (let [uid (-> request :claims :sub)
                           recipe-id (-> request :parameters :path :recipe-id)
-                          recipe (recipe-db/find-by-id db recipe-id)]
+                          recipe (queries/get-recipe db recipe-id)]
                       (if (= (:recipe/uid recipe) uid)
                         (handler request)
                         (-> (rr/response {:message "You need to be the recipe owner"
