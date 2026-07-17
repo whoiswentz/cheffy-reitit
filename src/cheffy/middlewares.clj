@@ -10,10 +10,10 @@
    :description "Middleware for auth0"
    :wrap (fn [handler]
            (jwt/wrap-jwt
-             handler
-             {:issuers {"https://dev-l6x6wetr1ruqvu3s.us.auth0.com/"
-                        {:alg :RS256
-                         :jwk-endpoint "https://dev-l6x6wetr1ruqvu3s.us.auth0.com/.well-known/jwks.json"}}}))})
+            handler
+            {:issuers {"https://dev-l6x6wetr1ruqvu3s.us.auth0.com/"
+                       {:alg :RS256
+                        :jwk-endpoint "https://dev-l6x6wetr1ruqvu3s.us.auth0.com/.well-known/jwks.json"}}}))})
 
 (s/def wrap-recipe-owner :- types/OwnerMiddleware
   {:name        ::recipe-owner

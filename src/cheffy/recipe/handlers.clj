@@ -73,3 +73,32 @@
         (rr/not-found {:type "recipe-not-found"
                        :message "Recipe not found"
                        :data (str "recipe-id-" recipe-id)})))))
+
+(s/defn create-step! :- types/Handler
+  [db :- types/Database]
+  (s/fn :- types/RingResponse [request :- types/RingRequest]
+    (let [step-id   (str (UUID/randomUUID))
+          recipe-id (-> request :parameters :path :recipe-id)
+          step      (assoc (-> request :parameters :body)
+                           :recipe-id recipe-id
+                           :step-id step-id)]
+      (recipe-db/insert-step! db step)
+      (rr/created (str "localhost/recipes/" recipe-id "/steps/" step-id) {:step-id step-id}))))
+
+(s/defn update-step! :- types/Handler
+  [db :- types/Database]
+  (s/fn :- types/RingResponse [request :- types/RingRequest]
+    (let [step (-> request :parameters :body)]
+      (if (recipe-db/update-step! db step)
+        (rr/status 204)
+        (rr/not-found {:type "step-not-found"
+                       :message "Step not found"})))))
+
+(s/defn delete-step! :- types/Handler
+  [db :- types/Database]
+  (s/fn :- types/RingResponse [request :- types/RingRequest]
+    (let [step-id (-> request :parameters :body :step-id)]
+      (if (recipe-db/delete-step! db step-id)
+        (rr/status 204)
+        (rr/not-found {:type "step-not-found"
+                       :message "Step not found"})))))

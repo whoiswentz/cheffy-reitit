@@ -1,8 +1,8 @@
 (ns cheffy.recipe.routes
-  (:require [cheffy.in :as in]
-            [cheffy.middlewares :as mw]
-            [cheffy.out :as out]
+  (:require [cheffy.middlewares :as mw]
             [cheffy.recipe.handlers :as recipe]
+            [cheffy.recipe.in :as in]
+            [cheffy.recipe.out :as out]
             [cheffy.types :as types]
             [schema.core :as s])
   (:import (clojure.lang PersistentVector)))
@@ -38,6 +38,25 @@
                  :parameters {:path {:recipe-id s/Str}}
                  :responses  {204 {:body nil?}}
                  :summary    "Delete recipe"}}]
+      ["/steps"
+       {:post    {:handler    (recipe/create-step! db)
+                  :middleware [[mw/wrap-recipe-owner db]]
+                  :parameters {:path {:recipe-id s/Str}
+                               :body in/StepCreate}
+                  :responses  {201 {:body {:step-id s/Str}}}
+                  :summary    "Create step"}
+        :put    {:handler    (recipe/update-step! db)
+                  :middleware [[mw/wrap-recipe-owner db]]
+                  :parameters {:path {:recipe-id s/Str}
+                               :body in/StepUpdate}
+                  :responses  {204 {:body nil?}}
+                  :summary    "Update step"}
+        :delete {:handler    (recipe/delete-step! db)
+                 :middleware [[mw/wrap-recipe-owner db]]
+                 :parameters {:path {:recipe-id s/Str}
+                              :body {:step-id s/Str}}
+                 :responses  {204 {:body nil?}}
+                 :summary    "Delete step"}}]
       ["/favorite"
        {:post   {:handler    (recipe/favorite-recipe! db)
                  :parameters {:path {:recipe-id s/Str}}

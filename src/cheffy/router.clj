@@ -34,5 +34,5 @@
 (s/defn routes :- types/Handler
   [env :- types/Env]
   (ring/ring-handler
-    (ring/router [swagger-docs ["/v1" (recipe/routes env)]] router-config)
-    (ring/routes (swagger-ui/create-swagger-ui-handler {:path "/"}))))
+   (ring/router [swagger-docs ["/v1" (recipe/routes env)]] router-config)
+   (ring/routes (swagger-ui/create-swagger-ui-handler {:path "/"}))))
