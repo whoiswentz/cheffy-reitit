@@ -19,4 +19,7 @@
                  :extra-deps  {ring/ring-mock {:mvn/version "0.6.2"}
                                integrant/repl {:mvn/version "0.5.1"}}}
 
-           :run {:main-opts ["-m" "cheffy.server"]}}}
+           :run {:main-opts ["-m" "cheffy.server"]}
+
+           :cljfmt {:extra-deps {dev.weavejester/cljfmt {:mvn/version "0.13.1"}}
+                    :main-opts  ["-m" "cljfmt.main"]}}}

@@ -46,17 +46,17 @@
                   :responses  {201 {:body {:step-id s/Str}}}
                   :summary    "Create step"}
         :put    {:handler    (recipe/update-step! db)
-                  :middleware [[mw/wrap-recipe-owner db]]
-                  :parameters {:path {:recipe-id s/Str}
-                               :body in/StepUpdate}
-                  :responses  {204 {:body nil?}}
-                  :summary    "Update step"}
+                 :middleware [[mw/wrap-recipe-owner db]]
+                 :parameters {:path {:recipe-id s/Str}
+                              :body in/StepUpdate}
+                 :responses  {204 {:body nil?}}
+                 :summary    "Update step"}
         :delete {:handler    (recipe/delete-step! db)
-                  :middleware [[mw/wrap-recipe-owner db]]
-                  :parameters {:path {:recipe-id s/Str}
-                               :body {:step-id s/Str}}
-                  :responses  {204 {:body nil?}}
-                  :summary    "Delete step"}}]
+                 :middleware [[mw/wrap-recipe-owner db]]
+                 :parameters {:path {:recipe-id s/Str}
+                              :body {:step-id s/Str}}
+                 :responses  {204 {:body nil?}}
+                 :summary    "Delete step"}}]
       ["/ingredients"
        {:post   {:handler    (recipe/create-ingredient! db)
                  :middleware [[mw/wrap-recipe-owner db]]
