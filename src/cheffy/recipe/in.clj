@@ -20,3 +20,16 @@
   {:step-id s/Str
    :description s/Str
    :sort s/Int})
+
+(s/defschema IngredientCreate
+  {:name s/Str
+   :amount s/Int
+   :measure s/Str
+   :sort s/Int})
+
+(s/defschema IngredientUpdate
+  {:ingredient-id s/Str
+   :name s/Str
+   :amount s/Int
+   :measure s/Str
+   :sort s/Int})

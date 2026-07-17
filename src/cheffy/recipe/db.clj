@@ -48,6 +48,20 @@
   (let [update (sql/delete! db :step {:step-id step-id})]
     (= (:next.jdbc/update-count update) 1)))
 
+(s/defn insert-ingredient! :- IPersistentMap
+  [db :- types/Database, ingredient :- models/NewIngredient]
+  (sql/insert! db :ingredient ingredient))
+
+(s/defn update-ingredient! :- s/Bool
+  [db :- types/Database, ingredient :- in/IngredientUpdate]
+  (let [update (sql/update! db :ingredient (dissoc ingredient :ingredient-id) (select-keys ingredient [:ingredient-id]))]
+    (= (:next.jdbc/update-count update) 1)))
+
+(s/defn delete-ingredient! :- s/Bool
+  [db :- types/Database, ingredient-id :- s/Str]
+  (let [update (sql/delete! db :ingredient {:ingredient-id ingredient-id})]
+    (= (:next.jdbc/update-count update) 1)))
+
 (s/defn favorite-recipe! :- IPersistentMap
   [db :- types/Database
    {:keys [recipe-id] :as data}]

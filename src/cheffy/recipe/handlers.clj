@@ -102,3 +102,33 @@
         (rr/status 204)
         (rr/not-found {:type "step-not-found"
                        :message "Step not found"})))))
+
+(s/defn create-ingredient! :- types/Handler
+  [db :- types/Database]
+  (s/fn :- types/RingResponse [request :- types/RingRequest]
+    (let [ingredient-id (str (UUID/randomUUID))
+          recipe-id     (-> request :parameters :path :recipe-id)
+          ingredient    (assoc (-> request :parameters :body)
+                               :recipe-id recipe-id
+                               :ingredient-id ingredient-id)]
+      (recipe-db/insert-ingredient! db ingredient)
+      (rr/created (str "localhost/recipes/" recipe-id "/ingredients/" ingredient-id)
+                  {:ingredient-id ingredient-id}))))
+
+(s/defn update-ingredient! :- types/Handler
+  [db :- types/Database]
+  (s/fn :- types/RingResponse [request :- types/RingRequest]
+    (let [ingredient (-> request :parameters :body)]
+      (if (recipe-db/update-ingredient! db ingredient)
+        (rr/status 204)
+        (rr/not-found {:type "ingredient-not-found"
+                       :message "Ingredient not found"})))))
+
+(s/defn delete-ingredient! :- types/Handler
+  [db :- types/Database]
+  (s/fn :- types/RingResponse [request :- types/RingRequest]
+    (let [ingredient-id (-> request :parameters :body :ingredient-id)]
+      (if (recipe-db/delete-ingredient! db ingredient-id)
+        (rr/status 204)
+        (rr/not-found {:type "ingredient-not-found"
+                       :message "Ingredient not found"})))))

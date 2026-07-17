@@ -16,3 +16,11 @@
 (s/defschema RecipeChanges
   (merge in/RecipeUpdate
          {:recipe-id s/Str}))
+
+(s/defschema NewIngredient
+  (merge in/IngredientCreate
+         {:recipe-id s/Str
+          :ingredient-id s/Str}))
+
+(s/defschema IngredientChanges
+  in/IngredientUpdate)
