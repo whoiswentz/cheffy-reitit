@@ -7,16 +7,17 @@
 
 (s/defn routes :- PersistentVector
   [env :- types/Env]
-  (let [db (:jdbc-url env)]
+  (let [db (:jdbc-url env)
+        auth0 (:auth0 env)]
     ["/account" {:swagger {:tags ["accounts"]}
-                  :middleware [[mw/wrap-auth0]]}
+                 :middleware [[mw/wrap-auth0 auth0]]}
      [""
       {:post {:handler (account/create-account! db)
               :responses {204 {:body nil?}}
               :summary "Create account"}
-       :put  {:handler   (account/update-role-to-cook!)
+       :put  {:handler   (account/update-role-to-cook! auth0)
               :responses {204 {:body nil?}}
               :summary   "Update user role to cook"}
-       :delete {:handler   (account/delete-account! db)
+       :delete {:handler   (account/delete-account! db auth0)
                 :responses {204 {:body nil?}}
                 :summary   "Delete account"}}]]))

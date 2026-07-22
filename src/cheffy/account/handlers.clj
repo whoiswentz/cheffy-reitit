@@ -12,10 +12,10 @@
       (rr/status 204))))
 
 (s/defn delete-account! :- types/Handler
-  [db :- types/Database]
+  [db :- types/Database, auth0 :- types/Auth0]
   (s/fn :- types/RingResponse [request :- types/RingRequest]
     (let [uid (-> request :claims :sub)
-          response (auth0/delete-user! uid (auth0/get-management-token))]
+          response (auth0/delete-user! auth0 uid (auth0/get-management-token auth0))]
       (if (= (:status response) 204)
         (do (account-db/delete db {:uid uid})
             (rr/status 204))
@@ -24,10 +24,11 @@
                           :data (str "uid-" uid)})
             (rr/status 502))))))
 
-(defn update-role-to-cook! []
+(defn update-role-to-cook!
+  [auth0]
   (fn [request]
     (let [uid (-> request :claims :sub)
-          token (auth0/get-management-token)
-          role-id (auth0/get-role-id token)]
-      (auth0/assign-role! token uid role-id)
+          token (auth0/get-management-token auth0)
+          role-id (auth0/get-role-id auth0 token)]
+      (auth0/assign-role! auth0 token uid role-id)
       (rr/status 204))))

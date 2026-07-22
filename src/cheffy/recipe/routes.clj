@@ -9,9 +9,10 @@
 
 (s/defn routes :- PersistentVector
   [env :- types/Env]
-  (let [db (:jdbc-url env)]
+  (let [db (:jdbc-url env)
+        auth0 (:auth0 env)]
     ["/recipes" {:swagger {:tags ["recipes"]}
-                 :middleware [[mw/wrap-auth0]]}
+                 :middleware [[mw/wrap-auth0 auth0]]}
      [""
       {:get {:handler (recipe/list-all-recipes db)
              :responses {200 {:body out/Recipes}}

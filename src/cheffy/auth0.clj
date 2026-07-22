@@ -1,90 +1,65 @@
 (ns cheffy.auth0
-  (:require [clj-http.client :as http]
-            [environ.core :refer [env]]
+  (:require [cheffy.types :as types]
+            [clj-http.client :as http]
+            [integrant.repl.state :as state]
             [muuntaja.core :as m]
             [schema.core :as s]))
 
-(s/defn ^:private required-env :- s/Str
-  [k :- s/Keyword]
-  (or (env k)
-      (throw
-       (ex-info (str "Missing environment variable: " k) {:key k}))))
-
-(s/defn auth0-domain :- s/Str
-  []
-  (required-env :auth0-domain))
-
-(defn- auth0-url
-  [path]
-  (str "https://" (auth0-domain) path))
-
-(s/defn get-test-token :- s/Str
-  ([] (get-test-token (required-env :auth0-test-username)))
-  ([username :- s/Str]
-   (->> {:content-type :json
-         :cookie-policy :standard
-         :body (m/encode "application/json"
-                         {:client_id (required-env :auth0-test-client-id)
-                          :audience (auth0-url "/api/v2/")
-                          :grant_type "http://auth0.com/oauth/grant-type/password-realm"
-                          :realm "Username-Password-Authentication"
-                          :username username
-                          :password (required-env :auth0-test-password)
-                          :scope "openid profile email"})}
-        (http/post (auth0-url "/oauth/token"))
-        (m/decode-response-body)
-        :access_token)))
+(s/defn auth0-url :- s/Str
+  [auth0 :- types/Auth0, path :- s/Str]
+  (str "https://" (:domain auth0) path))
 
 (s/defn get-management-token :- s/Str
-  []
+  [auth0 :- types/Auth0]
   (->> {:content-type :json
         :cookie-policy :standard
         :body (m/encode "application/json"
-                        {:client_id (required-env :auth0-client-id)
-                         :client_secret (required-env :auth0-client-secret)
-                         :audience (auth0-url "/api/v2/")
+                        {:client_id (:client-id auth0)
+                         :client_secret (:client-secret auth0)
+                         :audience (auth0-url auth0 "/api/v2/")
                          :grant_type "client_credentials"})}
-       (http/post (auth0-url "/oauth/token"))
+       (http/post (auth0-url auth0 "/oauth/token"))
        (m/decode-response-body)
        :access_token))
 
 (defn create-auth0-user
   [{:keys [connection email password]}]
-  (->> {:headers {"Authorization" (str "Bearer " (get-management-token))}
-        :throw-exceptions false
-        :content-type :json
-        :cookie-policy :standard
-        :body (m/encode "application/json"
-                        {:connection connection
-                         :email email
-                         :password password})}
-       (http/post (auth0-url "/api/v2/users"))
-       (m/decode-response-body)))
+  (let [auth0 (:auth/auth0 state/system)]
+    (->> {:headers {"Authorization" (str "Bearer " (get-management-token auth0))}
+          :throw-exceptions false
+          :content-type :json
+          :cookie-policy :standard
+          :body (m/encode "application/json"
+                          {:connection connection
+                           :email email
+                           :password password})}
+         (http/post (auth0-url auth0 "/api/v2/users"))
+         (m/decode-response-body))))
 
 (defn delete-user!
-  [uid token]
-  (http/delete (auth0-url (str "/api/v2/users/" uid))
+  [auth0 uid token]
+  (http/delete (auth0-url auth0 (str "/api/v2/users/" uid))
                {:headers {"Authorization" (str "Bearer " token)}
                 :throw-exceptions false}))
 
 (defn get-role-id
-  [token]
+  [auth0 token]
   (->> {:headers          {"Authorization" (str "Bearer " token)}
         :throw-exceptions false
         :content-type     :json
         :cookie-policy    :standard}
-       (http/get (auth0-url "/api/v2/roles"))
+       (http/get (auth0-url auth0 "/api/v2/roles"))
        (m/decode-response-body)
        (filter (fn [role] (= (:name role) "Manage Recipes")))
        (first)
        :id))
 
 (defn assign-role!
-  [token uid role-id]
+  [auth0 token uid role-id]
   (->> {:headers {"Authorization" (str "Bearer " token)}
         :throw-exceptions false
         :content-type :json
         :cookie-policy :standard
         :body (m/encode "application/json" {:roles [role-id]})}
-       (http/post (auth0-url (str "/api/v2/users/" uid "/roles")))
+       (http/post (auth0-url auth0 (str "/api/v2/users/" uid "/roles")))
        (m/decode-response-body)))

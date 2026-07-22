@@ -43,5 +43,11 @@
    (s/optional-key :description) s/Str
    :wrap                         (s/=> Handler Handler Database)})
 
+(def Auth0
+  {:domain        s/Str
+   :client-id     s/Str
+   :client-secret s/Str})
+
 (def Env
-  {:jdbc-url Database})
+  {:jdbc-url Database
+   :auth0    Auth0})

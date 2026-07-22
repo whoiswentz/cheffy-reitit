@@ -37,8 +37,9 @@
   [db :- types/Database]
   (s/fn :- types/RingResponse [request :- types/RingRequest]
     (let [recipe-id (-> request :parameters :path :recipe-id)
-          recipe    (assoc (-> request :parameters :body) :recipe-id recipe-id)]
-      (if (recipe-db/update-recipe! db recipe)
+          recipe    (assoc (-> request :parameters :body) :recipe-id recipe-id)
+          updated? (recipe-db/update-recipe! db recipe)]
+      (if updated?
         (rr/status 204)
         (rr/not-found {:type "recipe-not-found"
                        :message "Recipe not found"
@@ -47,8 +48,9 @@
 (s/defn delete-recipe! :- types/Handler
   [db :- types/Database]
   (s/fn :- types/RingResponse [request :- types/RingRequest]
-    (let [recipe-id (-> request :parameters :path :recipe-id)]
-      (if (recipe-db/delete! db recipe-id)
+    (let [recipe-id (-> request :parameters :path :recipe-id)
+          deleted? (recipe-db/delete! db recipe-id)]
+      (if deleted?
         (rr/status 204)
         (rr/not-found {:type "recipe-not-found"
                        :message "Recipe not found"
@@ -88,8 +90,9 @@
 (s/defn update-step! :- types/Handler
   [db :- types/Database]
   (s/fn :- types/RingResponse [request :- types/RingRequest]
-    (let [step (-> request :parameters :body)]
-      (if (recipe-db/update-step! db step)
+    (let [step (-> request :parameters :body)
+          updated? (recipe-db/update-step! db step)]
+      (if updated?
         (rr/status 204)
         (rr/not-found {:type "step-not-found"
                        :message "Step not found"})))))
@@ -97,8 +100,9 @@
 (s/defn delete-step! :- types/Handler
   [db :- types/Database]
   (s/fn :- types/RingResponse [request :- types/RingRequest]
-    (let [step-id (-> request :parameters :body :step-id)]
-      (if (recipe-db/delete-step! db step-id)
+    (let [step-id (-> request :parameters :body :step-id)
+          deleted? (recipe-db/delete-step! db step-id)]
+      (if deleted?
         (rr/status 204)
         (rr/not-found {:type "step-not-found"
                        :message "Step not found"})))))
@@ -118,8 +122,9 @@
 (s/defn update-ingredient! :- types/Handler
   [db :- types/Database]
   (s/fn :- types/RingResponse [request :- types/RingRequest]
-    (let [ingredient (-> request :parameters :body)]
-      (if (recipe-db/update-ingredient! db ingredient)
+    (let [ingredient (-> request :parameters :body)
+          updated? (recipe-db/update-ingredient! db ingredient)]
+      (if updated?
         (rr/status 204)
         (rr/not-found {:type "ingredient-not-found"
                        :message "Ingredient not found"})))))
@@ -127,8 +132,9 @@
 (s/defn delete-ingredient! :- types/Handler
   [db :- types/Database]
   (s/fn :- types/RingResponse [request :- types/RingRequest]
-    (let [ingredient-id (-> request :parameters :body :ingredient-id)]
-      (if (recipe-db/delete-ingredient! db ingredient-id)
+    (let [ingredient-id (-> request :parameters :body :ingredient-id)
+          deleted? (recipe-db/delete-ingredient! db ingredient-id)]
+      (if deleted?
         (rr/status 204)
         (rr/not-found {:type "ingredient-not-found"
                        :message "Ingredient not found"})))))

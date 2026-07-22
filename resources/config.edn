@@ -1,4 +1,8 @@
 {:server/jetty {:handler #ig/ref :cheffy/app
                 :port    3000}
- :cheffy/app   {:jdbc-url #ig/ref :db/postgres}
- :db/postgres  {:jdbc-url "jdbc:postgresql://localhost:5432/cheffy?user=cheffy&password=cheffy_password"}}
+ :cheffy/app   {:jdbc-url #ig/ref :db/postgres
+                :auth0    #ig/ref :auth/auth0}
+ :db/postgres  {:jdbc-url "jdbc:postgresql://localhost:5432/cheffy?user=cheffy&password=cheffy_password"}
+ :auth/auth0   {:domain        "your-tenant.us.auth0.com"
+                :client-id     "auth0-client-id"
+                :client-secret "auth0-token"}}

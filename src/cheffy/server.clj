@@ -43,6 +43,17 @@
   (log/info "Configured db" key)
   (jdbc/with-options jdbc-url jdbc/snake-kebab-opts))
 
+(s/defmethod ig/expand-key :auth/auth0 :- IPersistentMap
+  [key :- s/Keyword, config :- IPersistentMap]
+  {key (cond-> config
+         (env :auth0-domain)        (assoc :domain (env :auth0-domain))
+         (env :auth0-client-id)     (assoc :client-id (env :auth0-client-id))
+         (env :auth0-client-secret) (assoc :client-secret (env :auth0-client-secret)))})
+
+(s/defmethod ig/init-key :auth/auth0 :- types/Auth0
+  [_ :- s/Keyword, config :- types/Auth0]
+  config)
+
 (s/defmethod ig/halt-key! :server/jetty :- (s/maybe Object)
   [_ :- s/Keyword, jetty :- Server]
   (.stop jetty))
