@@ -1,21 +1,29 @@
 (ns cheffy.account.handlers
-  (:require [ring.util.response :as rr]
-            [schema.core :as s]
-            [cheffy.account.db :as account-db]))
+  (:require [cheffy.account.db :as account-db]
+            [cheffy.auth0 :as auth0]
+            [cheffy.types :as types]
+            [clj-http.client :as http]
+            [ring.util.response :as rr]
+            [schema.core :as s]))
 
-(s/defn create-account! [db :- cheffy.types/Database]
-  (s/fn :- cheffy.types/RingResponse [request :- cheffy.types/RingRequest]
+(s/defn create-account! [db :- types/Database]
+  (s/fn :- types/RingResponse [request :- types/RingRequest]
     (let [{:keys [sub name picture]} (-> request :claims)]
       (account-db/create db {:uid sub :name name :picture picture})
       (rr/status 204))))
 
-(s/defn delete-account
-  [db :- cheffy.types/Database]
-  (s/fn [request]
+(s/defn delete-account! :- types/Handler
+  [db :- types/Database]
+  (s/fn :- types/RingResponse [request :- types/RingRequest]
     (let [uid (-> request :claims :sub)
-          delete-auth0-account! (http/delete
-                                  (str "https://dev-l6x6wetr1ruqvu3s.us.auth0.com/api/v2/users/" uid)
-                                  {:header {"Authorization" (str "Bearer " (cheffy.auth0/get-management-token))}})]
-      (when (= (:status delete-auth0-account!) 204)
-        (account-db/delete db {:uid uid})
-        (rr/status 204)))))
+          response (http/delete
+                    (str "https://dev-l6x6wetr1ruqvu3s.us.auth0.com/api/v2/users/" uid)
+                    {:headers {"Authorization" (str "Bearer " (auth0/get-management-token))}
+                     :throw-exceptions false})]
+      (if (= (:status response) 204)
+        (do (account-db/delete db {:uid uid})
+            (rr/status 204))
+        (-> (rr/response {:type "auth0-account-deletion-failed"
+                          :message "Failed to delete account on Auth0"
+                          :data (str "uid-" uid)})
+            (rr/status 502))))))

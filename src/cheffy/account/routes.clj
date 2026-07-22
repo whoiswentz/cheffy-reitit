@@ -12,5 +12,8 @@
                   :middleware [[mw/wrap-auth0]]}
      [""
       {:post {:handler (account/create-account! db)
-              :response {204 {:body nil?}}
-              :summary "Create account"}}]]))
+              :responses {204 {:body nil?}}
+              :summary "Create account"}
+       :delete {:handler (account/delete-account! db)
+                :responses {204 {:body nil?}}
+                :summary "Delete account"}}]]))
