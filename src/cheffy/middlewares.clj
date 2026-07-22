@@ -1,5 +1,6 @@
 (ns cheffy.middlewares
-  (:require [cheffy.recipe.db :as recipe-db]
+  (:require [cheffy.auth0 :as auth0]
+            [cheffy.recipe.db :as recipe-db]
             [cheffy.types :as types]
             [ring.middleware.jwt :as jwt]
             [ring.util.response :as rr]
@@ -11,9 +12,9 @@
    :wrap (fn [handler]
            (jwt/wrap-jwt
             handler
-            {:issuers {"https://dev-kvt13fczy54wnqui.us.auth0.com/"
+            {:issuers {(str "https://" (auth0/auth0-domain) "/")
                        {:alg :RS256
-                        :jwk-endpoint "https://dev-kvt13fczy54wnqui.us.auth0.com/.well-known/jwks.json"}}}))})
+                        :jwk-endpoint (str "https://" (auth0/auth0-domain) "/.well-known/jwks.json")}}}))})
 
 (s/def wrap-recipe-owner :- types/OwnerMiddleware
   {:name        ::recipe-owner

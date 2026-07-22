@@ -2,7 +2,6 @@
   (:require [cheffy.account.db :as account-db]
             [cheffy.auth0 :as auth0]
             [cheffy.types :as types]
-            [clj-http.client :as http]
             [ring.util.response :as rr]
             [schema.core :as s]))
 
@@ -16,10 +15,7 @@
   [db :- types/Database]
   (s/fn :- types/RingResponse [request :- types/RingRequest]
     (let [uid (-> request :claims :sub)
-          response (http/delete
-                    (str "https://dev-kvt13fczy54wnqui.us.auth0.com/api/v2/users/" uid)
-                    {:headers {"Authorization" (str "Bearer " (auth0/get-management-token))}
-                     :throw-exceptions false})]
+          response (auth0/delete-user! uid (auth0/get-management-token))]
       (if (= (:status response) 204)
         (do (account-db/delete db {:uid uid})
             (rr/status 204))
