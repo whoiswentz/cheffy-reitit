@@ -37,3 +37,16 @@
        (http/post "https://dev-l6x6wetr1ruqvu3s.us.auth0.com/oauth/token")
        (m/decode-response-body)
        :access_token))
+
+
+(defn get-role-id
+  [token]
+  (->> {:headers          {"Authorization" (str "Bearer " token)}
+        :throw-exceptions false
+        :content-type     :json
+        :cookie-policy    :standard}
+       (http/get "https://dev-l6x6wetr1ruqvu3s.us.auth0.com/api/v2/roles")
+       (m/decode-response-body)
+       (filter (fn [role] (= (:name role) "manage-recipes")))
+       (first)
+       :id))

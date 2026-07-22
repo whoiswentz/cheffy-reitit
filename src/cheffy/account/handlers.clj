@@ -3,6 +3,7 @@
             [cheffy.auth0 :as auth0]
             [cheffy.types :as types]
             [clj-http.client :as http]
+            [muuntaja.core :as m]
             [ring.util.response :as rr]
             [schema.core :as s]))
 
@@ -27,3 +28,15 @@
                           :message "Failed to delete account on Auth0"
                           :data (str "uid-" uid)})
             (rr/status 502))))))
+
+(defn update-role-to-cook! []
+  []
+  (fn [request]
+    (let [uid (-> request :claims :sub)
+          token (auth0/get-management-token)]
+      (->> {:headers          {"Authorization" (str "Bearer " token)}
+            :cookie-policy    :standard
+            :content-type     :json
+            :throw-exceptions false
+            :body             (m/encode "application/json" {:roles [(auth0/get-role-id token)]})})
+      (http/post (str "https://dev-l6x6wetr1ruqvu3s.us.auth0.com/api/v2/users/" uid "/roles")))))

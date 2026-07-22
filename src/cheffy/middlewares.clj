@@ -29,3 +29,16 @@
                                           :data    (str "recipe-id " recipe-id)
                                           :type    :authorization-required})
                             (rr/status 401))))))})
+
+(def wrap-manage-recipes
+  {:name        ::manage-recipes
+   :description "Middleware to check if a user can manage recipes"
+   :wrap        (fn [handler]
+                  (fn [request]
+                    (let [roles (get-in request [:claims "https://api.alchemists.stream/roles"])]
+                      (if (some #{"manage-roles"} roles)
+                        (handler request)
+                        (-> (rr/response {:message "You need to be a cook to manager recipes"
+                                          :data    (:uri request)
+                                          :type    :authorization-required})
+                            (rr/status 401))))))})

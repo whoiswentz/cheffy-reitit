@@ -1,8 +1,8 @@
 (ns cheffy.account.routes
-  (:require [cheffy.middlewares :as mw]
-            [schema.core :as s]
+  (:require [cheffy.account.handlers :as account]
+            [cheffy.middlewares :as mw]
             [cheffy.types :as types]
-            [cheffy.account.handlers :as account])
+            [schema.core :as s])
   (:import (clojure.lang PersistentVector)))
 
 (s/defn routes :- PersistentVector
@@ -14,6 +14,9 @@
       {:post {:handler (account/create-account! db)
               :responses {204 {:body nil?}}
               :summary "Create account"}
-       :delete {:handler (account/delete-account! db)
+       :put  {:handler   (account/update-role-to-cook!)
+              :responses {204 {:body nil?}}
+              :summary   "Update user role to cook"}
+       :delete {:handler   (account/delete-account! db)
                 :responses {204 {:body nil?}}
-                :summary "Delete account"}}]]))
+                :summary   "Delete account"}}]]))
