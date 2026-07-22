@@ -11,19 +11,21 @@
        (ex-info (str "Missing environment variable: " k) {:key k}))))
 
 (s/defn get-test-token :- s/Str
-  []
-  (->> {:content-type :json
-        :cookie-policy :standard
-        :body (m/encode "application/json"
-                        {:client_id (required-env :auth0-client-id)
-                         :audience "https://dev-l6x6wetr1ruqvu3s.us.auth0.com/api/v2/"
-                         :grant_type "password"
-                         :username (required-env :auth0-test-username)
-                         :password (required-env :auth0-test-password)
-                         :scope "openid profile email"})}
-       (http/post "https://dev-l6x6wetr1ruqvu3s.us.auth0.com/oauth/token")
-       (m/decode-response-body)
-       :access_token))
+  ([] (get-test-token (required-env :auth0-test-username)))
+  ([username :- s/Str]
+   (->> {:content-type :json
+         :cookie-policy :standard
+         :body (m/encode "application/json"
+                         {:client_id (required-env :auth0-test-client-id)
+                          :audience "https://dev-kvt13fczy54wnqui.us.auth0.com/api/v2/"
+                          :grant_type "http://auth0.com/oauth/grant-type/password-realm"
+                          :realm "Username-Password-Authentication"
+                          :username username
+                          :password (required-env :auth0-test-password)
+                          :scope "openid profile email"})}
+        (http/post "https://dev-kvt13fczy54wnqui.us.auth0.com/oauth/token")
+        (m/decode-response-body)
+        :access_token)))
 
 (s/defn get-management-token :- s/Str
   []
@@ -32,12 +34,24 @@
         :body (m/encode "application/json"
                         {:client_id (required-env :auth0-client-id)
                          :client_secret (required-env :auth0-client-secret)
-                         :audience "https://dev-l6x6wetr1ruqvu3s.us.auth0.com/api/v2/"
+                         :audience "https://dev-kvt13fczy54wnqui.us.auth0.com/api/v2/"
                          :grant_type "client_credentials"})}
-       (http/post "https://dev-l6x6wetr1ruqvu3s.us.auth0.com/oauth/token")
+       (http/post "https://dev-kvt13fczy54wnqui.us.auth0.com/oauth/token")
        (m/decode-response-body)
        :access_token))
 
+(defn create-auth0-user
+  [{:keys [connection email password]}]
+  (->> {:headers {"Authorization" (str "Bearer " (get-management-token))}
+        :throw-exceptions false
+        :content-type :json
+        :cookie-policy :standard
+        :body (m/encode "application/json"
+                        {:connection connection
+                         :email email
+                         :password password})}
+       (http/post "https://dev-kvt13fczy54wnqui.us.auth0.com/api/v2/users")
+       (m/decode-response-body)))
 
 (defn get-role-id
   [token]
@@ -45,8 +59,18 @@
         :throw-exceptions false
         :content-type     :json
         :cookie-policy    :standard}
-       (http/get "https://dev-l6x6wetr1ruqvu3s.us.auth0.com/api/v2/roles")
+       (http/get "https://dev-kvt13fczy54wnqui.us.auth0.com/api/v2/roles")
        (m/decode-response-body)
-       (filter (fn [role] (= (:name role) "manage-recipes")))
+       (filter (fn [role] (= (:name role) "Manage Recipes")))
        (first)
        :id))
+
+(defn assign-role!
+  [token uid role-id]
+  (->> {:headers {"Authorization" (str "Bearer " token)}
+        :throw-exceptions false
+        :content-type :json
+        :cookie-policy :standard
+        :body (m/encode "application/json" {:roles [role-id]})}
+       (http/post (str "https://dev-kvt13fczy54wnqui.us.auth0.com/api/v2/users/" uid "/roles"))
+       (m/decode-response-body)))

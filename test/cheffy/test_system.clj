@@ -8,6 +8,15 @@
 
 (def token (atom nil))
 
+(defn account-fixture
+  [f]
+  (auth/create-auth0-user
+    {:connection "Username-Password-Authentication"
+     :email "account-tests@cheffy.app"
+     :password "s#m3R4nd0m-pass"})
+  (reset! token (auth/get-test-token "account-tests@cheffy.app"))
+  (f))
+
 (defn token-fixtures
   [f]
   (reset! token (auth/get-test-token))

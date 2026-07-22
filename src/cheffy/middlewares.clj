@@ -11,9 +11,9 @@
    :wrap (fn [handler]
            (jwt/wrap-jwt
             handler
-            {:issuers {"https://dev-l6x6wetr1ruqvu3s.us.auth0.com/"
+            {:issuers {"https://dev-kvt13fczy54wnqui.us.auth0.com/"
                        {:alg :RS256
-                        :jwk-endpoint "https://dev-l6x6wetr1ruqvu3s.us.auth0.com/.well-known/jwks.json"}}}))})
+                        :jwk-endpoint "https://dev-kvt13fczy54wnqui.us.auth0.com/.well-known/jwks.json"}}}))})
 
 (s/def wrap-recipe-owner :- types/OwnerMiddleware
   {:name        ::recipe-owner
@@ -35,8 +35,8 @@
    :description "Middleware to check if a user can manage recipes"
    :wrap        (fn [handler]
                   (fn [request]
-                    (let [roles (get-in request [:claims "https://api.alchemists.stream/roles"])]
-                      (if (some #{"manage-roles"} roles)
+                    (let [roles (get-in request [:claims "http://api.alchemists.stream/roles"])]
+                      (if (some #{"Manage Recipes"} roles)
                         (handler request)
                         (-> (rr/response {:message "You need to be a cook to manager recipes"
                                           :data    (:uri request)

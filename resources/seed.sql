@@ -4,7 +4,8 @@ insert into account ("uid", "name")
 values ('auth0|6a56d66858b336d7aa4188b6', 'Auth0'),
        ('mike@mailinator.com', 'Mike'),
        ('jade@mailinator.com', 'Jade'),
-       ('mark@mailinator.com', 'Mark');
+       ('mark@mailinator.com', 'Mark'),
+       ('auth0|6a611c7dd7c8c227bf7c691c', 'testing@cheffy.app');
 
 -- recipe
 truncate table recipe cascade;

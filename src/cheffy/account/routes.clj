@@ -8,7 +8,7 @@
 (s/defn routes :- PersistentVector
   [env :- types/Env]
   (let [db (:jdbc-url env)]
-    ["/accounts" {:swagger {:tags ["accounts"]}
+    ["/account" {:swagger {:tags ["accounts"]}
                   :middleware [[mw/wrap-auth0]]}
      [""
       {:post {:handler (account/create-account! db)
