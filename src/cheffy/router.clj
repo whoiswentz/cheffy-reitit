@@ -1,6 +1,7 @@
 (ns cheffy.router
   (:require [cheffy.recipe.routes :as recipe]
             [cheffy.account.routes :as account]
+            [cheffy.conversation.routes :as conversation]
             [cheffy.types :as types]
             [muuntaja.core :as m]
             [reitit.coercion.schema :as coercion-schema]
@@ -37,7 +38,8 @@
   (ring/ring-handler
    (ring/router [swagger-docs ["/v1"
                                (recipe/routes env)
-                               (account/routes env)]]
+                               (account/routes env)
+                               (conversation/routes env)]]
                 router-config)
    (ring/routes
     (swagger-ui/create-swagger-ui-handler {:path "/"}))))
